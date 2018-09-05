@@ -1,59 +1,5 @@
 'use strict';
 
-function Tank(position) {
-    this.position = position;
-    this.velocity = new Vector(1, 0);
-    this.rotation = degreesToRadians(90);
-
-    this.width = 50;
-    this.height = 20;
-    this.center = new Vector(this.position.x + this.width/2, this.position.y + this.height/2);
-
-    this.wheelRadius = 5;
-
-    this.rotationSpeed = 5;
-    this.moveSpeed = 5;
-
-    this.allPositions = [];
-    this.recentMovements = [];
-    this.totalDistance = 0
-
-    this.stopped = false;
-
-    this.sensors = {
-        frontLeft: {
-            offsetPos: new Vector(this.width, 0),
-            position: new Vector(this.width, 15),
-            direction: Vector.zero,
-            length: 1000,
-            hitDistance: Number.POSITIVE_INFINITY
-        },
-        frontRight : {
-            offsetPos: new Vector(this.width, this.height),
-            position: new Vector(this.width, this.height - 15),
-            direction: Vector.zero,
-            length: 1000,
-            hitDistance: Number.POSITIVE_INFINITY
-        },
-        leftSide : {
-            offsetPos: new Vector(this.width - 15, 15),
-            offsetAngle: degreesToRadians(-30),
-            position: new Vector(this.width - 15, 0),
-            direction: Vector.zero,
-            length: 1000,
-            hitDistance: Number.POSITIVE_INFINITY
-        },
-        rightSide: {
-            offsetPos: new Vector(this.width - 15, this.height - 15),
-            position: new Vector(this.width - 15, this.height),
-            offsetAngle: degreesToRadians(30),
-            direction: Vector.zero,
-            length: 1000,
-            hitDistance: Number.POSITIVE_INFINITY
-        }
-    };
-}
-
 let world = {
     AI: false,
     geneticModel: new Genetic(1),
@@ -62,6 +8,7 @@ let world = {
     mouse: new Vector(0, 0),
 
     polygons: [[new Vector(10, 10), new Vector(10, 680), new Vector(980, 680), new Vector(980, 10), new Vector(10, 10)]],
+    checkpoints: [],
     points: [],
 
     lastResetTime: null,
@@ -93,6 +40,10 @@ window.onload = () => {
             world.polygons.push(world.points);
             world.points = [];
         }
+
+        if (event.keyCode == enums.keyboard.KEY_C + 32) {
+            world.checkpoints.push(new Checkpoint(new Vector(world.mouse.x, world.mouse.y)));
+        }
     }, 1);
 
     let resetButton = document.getElementById("reset-button");
@@ -123,7 +74,14 @@ function reset() {
 
     world.tanks = [];
     for (let i = 0; i < world.geneticModel.populationSize; i++) {
-        world.tanks.push(new Tank(new Vector(200, 150)));
+        let tank = new Tank(new Vector(200, 150));
+        
+        for (let j = 0; j < world.checkpoints.length; j++) {
+            let checkpoint = world.checkpoints[j];
+            tank.checkpoints.push(new Checkpoint(checkpoint.position));
+        }
+
+        world.tanks.push(tank);
     }
     world.lastResetTime = Date.now();
 }
@@ -201,6 +159,14 @@ function update(ctx) {
 
     for (let i = 0; i < world.geneticModel.populationSize; i++) {
         let tank = world.tanks[i];
+
+        world.geneticModel.individuals[i].fitness = tank.totalDistance;
+        for (let j = 0; j < tank.checkpoints.length; j++) {
+            if (tank.checkpoints[j].checked) {
+                world.geneticModel.individuals[i].fitness += (j + 1) * 500;
+            }
+        }
+
         if (tank.stopped) {
             continue;
         }
@@ -234,6 +200,7 @@ function update(ctx) {
 
         if (world.AI) {
             moveLimit(tank);
+            checkpointCheck(tank);
         }
     }
 

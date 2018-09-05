@@ -71,6 +71,33 @@ function movement2(tank, parameters) {
   tank.position = tank.position.add(moveVector);
 }
 
+function checkpointCheck(tank) {
+  let nextCheckpoint = tank.checkpoints[tank.checkpointIndex];
+  let distanceToCheckpoint = nextCheckpoint.position.subtract(tank.center).length();
+  
+  if (distanceToCheckpoint <= nextCheckpoint.radius) {
+    tank.checkpointIndex++;
+    if (tank.checkpointIndex == tank.checkpoints.length) {
+      tank.checkpointIndex = 0;
+    }
+    tank.nearestDistToCheckpoint = Number.POSITIVE_INFINITY;
+    nextCheckpoint.checked = true;
+    return;
+  }
+
+
+  if (tank.nearestDistToCheckpoint == Number.POSITIVE_INFINITY) {
+    tank.nearestDistToCheckpoint = distanceToCheckpoint;
+    return;
+  }
+
+  if (distanceToCheckpoint - tank.nearestDistToCheckpoint > 100) {
+    tank.stopped = true;
+    return;
+  }
+
+}
+
 function moveLimit(tank) {
   let numberOfPositions = tank.allPositions.length;
   let point1 = tank.allPositions[numberOfPositions - 1];

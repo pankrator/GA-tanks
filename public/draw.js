@@ -33,9 +33,25 @@ function drawSensor(ctx, sensor) {
     }
 }
 
+function drawCheckpoint(ctx, checkpoint) {
+    ctx.fillStyle = "#f4d341";
+    ctx.save();
+    ctx.beginPath();
+    ctx.globalAlpha = 0.5;
+    ctx.arc(checkpoint.position.x, checkpoint.position.y, checkpoint.radius, 0, Math.PI * 2, 0);
+    ctx.fill();
+    ctx.restore();
+}
+
 
 function draw(ctx) {
     ctx.clearRect(0, 0, 1000, 1000);
+
+    for (let i = 0; i < world.checkpoints.length; i++) {
+        let checkpoint = world.checkpoints[i];
+
+        drawCheckpoint(ctx, checkpoint);
+    }
 
     for (let i = 0; i < world.geneticModel.populationSize; i++) {
         let tank = world.tanks[i];
@@ -57,10 +73,10 @@ function draw(ctx) {
         ctx.restore();
 
         if (!tank.stopped) {
-            drawSensor(ctx, tank.sensors.frontLeft);
-            drawSensor(ctx, tank.sensors.frontRight);
-            drawSensor(ctx, tank.sensors.leftSide);
-            drawSensor(ctx, tank.sensors.rightSide);
+            // drawSensor(ctx, tank.sensors.frontLeft);
+            // drawSensor(ctx, tank.sensors.frontRight);
+            // drawSensor(ctx, tank.sensors.leftSide);
+            // drawSensor(ctx, tank.sensors.rightSide);
         }
     }
 
