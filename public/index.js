@@ -4,13 +4,13 @@ function Tank(position) {
     this.position = position;
     this.velocity = new Vector(1, 0);
     this.rotation = degreesToRadians(90);
-    // this.rotation = 0;
 
     this.width = 50;
     this.height = 20;
     this.center = new Vector(this.position.x + this.width/2, this.position.y + this.height/2);
 
     this.wheelRadius = 5;
+
     this.rotationSpeed = 5;
     this.moveSpeed = 5;
 
@@ -18,19 +18,18 @@ function Tank(position) {
     this.recentMovements = [];
     this.totalDistance = 0
 
-
     this.stopped = false;
 
     this.sensors = {
         frontLeft: {
-            offsetPos: new Vector(this.width - 25, this.height / 2),
+            offsetPos: new Vector(this.width, 0),
             position: new Vector(this.width, 15),
             direction: Vector.zero,
             length: 1000,
             hitDistance: Number.POSITIVE_INFINITY
         },
         frontRight : {
-            offsetPos: new Vector(this.width, this.height - 15),
+            offsetPos: new Vector(this.width, this.height),
             position: new Vector(this.width, this.height - 15),
             direction: Vector.zero,
             length: 1000,
@@ -38,7 +37,7 @@ function Tank(position) {
         },
         leftSide : {
             offsetPos: new Vector(this.width - 15, 15),
-            offsetAngle: degreesToRadians(-90),
+            offsetAngle: degreesToRadians(-30),
             position: new Vector(this.width - 15, 0),
             direction: Vector.zero,
             length: 1000,
@@ -47,7 +46,7 @@ function Tank(position) {
         rightSide: {
             offsetPos: new Vector(this.width - 15, this.height - 15),
             position: new Vector(this.width - 15, this.height),
-            offsetAngle: degreesToRadians(90),
+            offsetAngle: degreesToRadians(30),
             direction: Vector.zero,
             length: 1000,
             hitDistance: Number.POSITIVE_INFINITY
@@ -110,7 +109,7 @@ function init() {
     reset();
 
     for (let i = 0; i < world.geneticModel.populationSize; i++) {
-        let params = randomParameters();
+        let params = randomParameters(16);
         world.geneticModel.addIndividual(new Individual(params));
     }
 }
@@ -189,7 +188,6 @@ function update(ctx) {
         return tank.stopped;
     });
     
-    
     if (world.AI && (world.lastResetTime !== null || areAllStopped)) {
         if (Date.now() - world.lastResetTime >= world.timeBetweenSimulations || areAllStopped) {
             for (let i = 0; i < world.geneticModel.populationSize; i++) {
@@ -201,7 +199,6 @@ function update(ctx) {
         }
     }
 
-    
     for (let i = 0; i < world.geneticModel.populationSize; i++) {
         let tank = world.tanks[i];
         if (tank.stopped) {
@@ -210,6 +207,7 @@ function update(ctx) {
 
         tank.center = new Vector(tank.position.x + tank.width/2, tank.position.y + tank.height/2);
         updateSensor(tank, tank.sensors.frontLeft);
+        updateSensor(tank, tank.sensors.frontRight);
         updateSensor(tank, tank.sensors.leftSide);
         updateSensor(tank, tank.sensors.rightSide);
 

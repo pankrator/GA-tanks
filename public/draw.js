@@ -58,6 +58,7 @@ function draw(ctx) {
 
         if (!tank.stopped) {
             drawSensor(ctx, tank.sensors.frontLeft);
+            drawSensor(ctx, tank.sensors.frontRight);
             drawSensor(ctx, tank.sensors.leftSide);
             drawSensor(ctx, tank.sensors.rightSide);
         }
