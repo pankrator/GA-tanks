@@ -19,6 +19,7 @@ function drawSensor(ctx, sensor) {
     ctx.fill();
 
     if (sensor.direction) {
+        ctx.strokeStyle = "#990099";
         ctx.beginPath();
         ctx.moveTo(sensor.position.x, sensor.position.y);
         let scaledDir;
@@ -55,9 +56,11 @@ function draw(ctx) {
     
         ctx.restore();
 
-        drawSensor(ctx, tank.sensors.frontLeft);
-        drawSensor(ctx, tank.sensors.leftSide);
-        drawSensor(ctx, tank.sensors.rightSide);
+        if (!tank.stopped) {
+            drawSensor(ctx, tank.sensors.frontLeft);
+            drawSensor(ctx, tank.sensors.leftSide);
+            drawSensor(ctx, tank.sensors.rightSide);
+        }
     }
 
 

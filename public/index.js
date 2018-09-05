@@ -62,7 +62,7 @@ let world = {
     tank: new Tank(new Vector()),
     mouse: new Vector(0, 0),
 
-    polygons: [[new Vector(10, 10), new Vector(10, 980), new Vector(980, 980), new Vector(980, 10), new Vector(10, 10)]],
+    polygons: [[new Vector(10, 10), new Vector(10, 680), new Vector(980, 680), new Vector(980, 10), new Vector(10, 10)]],
     points: [],
 
     lastResetTime: null,
@@ -74,6 +74,7 @@ let input = new Array(255);
 window.onload = () => {
     let canvas = document.getElementById("area");
     let context = canvas.getContext("2d");
+
     canvas.addEventListener("mousemove", (event) => {
         world.mouse.x = event.clientX;
         world.mouse.y = event.clientY;
@@ -105,17 +106,22 @@ window.onload = () => {
 };
 
 function init() {
-    world.tanks = [];
-    world.geneticModel = new Genetic(15);
+    world.geneticModel = new Genetic(30);
+    reset();
+
     for (let i = 0; i < world.geneticModel.populationSize; i++) {
         let params = randomParameters();
-        world.geneticModel.addIndividual(new Individual(params))
-        world.tanks.push(new Tank(new Vector(200, 150)));
+        world.geneticModel.addIndividual(new Individual(params));
     }
-    world.lastResetTime = Date.now();
 }
 
 function reset() {
+    const elitism = parseInt(document.getElementById("elitism").value);
+    world.geneticModel.elitism = elitism;
+
+    const mutationRate = parseFloat(document.getElementById("mutation-rate").value);
+    world.geneticModel.mutationRate = mutationRate;
+
     world.tanks = [];
     for (let i = 0; i < world.geneticModel.populationSize; i++) {
         world.tanks.push(new Tank(new Vector(200, 150)));
@@ -176,6 +182,7 @@ function updateInput() {
 }
 
 function update(ctx) {
+    updateHTML();
     updateInput();
 
     let areAllStopped = world.tanks.every((tank) => {
@@ -271,5 +278,17 @@ function tankToPolygonCollision(tank) {
                 return true;
             }
         }
+    }
+}
+
+function updateHTML() {
+    let content = document.getElementById("simulation-time");
+    content.innerHTML = `SIMULATION TIME LEFT: ${(world.timeBetweenSimulations - (Date.now() - world.lastResetTime)) / 1000}`;
+
+    let info = document.getElementById("info-content");
+    info.innerHTML = "";
+    for (let i = 0; i < world.geneticModel.populationSize; i++) {
+        let individual = world.geneticModel.individuals[i];
+        info.innerHTML += `<div>TANK ${i}: ${Math.ceil(individual.fitness)}</div>`;
     }
 }

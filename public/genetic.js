@@ -44,6 +44,7 @@ function Genetic(populationSize) {
   this.populationSize = populationSize;
   this.mutationRate = 0.25;
   this.individuals = [];
+  this.elitism = 2;
 }
 
 Genetic.prototype.addIndividual = function(individual) {
@@ -54,28 +55,26 @@ Genetic.prototype.evolve = function() {
   this.individuals.sort((a, b) => {
     return b.fitness - a.fitness;
   });
-  let nextPopulation = [this.individuals[0], this.individuals[1]];
+
+  let nextPopulation = [];
+  for (let i = 0; i < this.elitism; i++) {
+    nextPopulation.push(this.individuals[i]);
+  }
+
   
-  for (let i = 0; i < this.populationSize - 2; i++) {
-    let child1 = nextPopulation[0].mutate(this.mutationRate);
-    let child2 = nextPopulation[1].mutate(this.mutationRate);
+  for (let i = 0; i < this.populationSize - this.elitism; i++) {
+    let index1 = getRandomInt(0, this.elitism - 1);
+    let index2 = getRandomInt(0, this.elitism - 1);
+    while (index2 == index1) {
+      index2 = getRandomInt(0, this.elitism - 1);
+    }
+
+    let child1 = nextPopulation[index1].mutate(this.mutationRate);
+    let child2 = nextPopulation[index2].mutate(this.mutationRate);
 
     let child = child1.crossover(child2);
 
     nextPopulation.push(child);
-
-    // let len = nextPopulation.length;
-    // let parent1Index = Math.floor(Math.random() * len);
-    // let parent2Index = Math.floor(Math.random() * len);
-    // while (parent2Index == parent1Index) {
-    //   parent2Index = Math.floor(Math.random() * len);
-    // }
-    // let parent1 = nextPopulation[parent1Index];
-    // let parent2 = nextPopulation[parent2Index];
-
-    // let child = parent1.crossover(parent2);
-    // child = child.mutate(this.mutateRate);
-    // nextPopulation.push(child);
   }
 
   this.individuals = nextPopulation;

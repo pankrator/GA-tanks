@@ -12,7 +12,7 @@ function randomParameters() {
 function paramsScale(params, scaleFactor) {
   let result = [];
   for (let i = 0; i < params.length; i++) {
-    result.push((params[i] - 0.5) /* * scaleFactor */);
+    result.push((params[i] - 0.5) * scaleFactor);
   }
 
   return result;
@@ -25,9 +25,17 @@ function movement2(tank, parameters) {
     tank.sensors.rightSide.hitDistance,
   ];
 
+  // Check for invalid values from sensors
+  for (let i = 0; i < sensorsData.length; i++) {
+    if (!sensorsData[i] || sensorsData[i] == Number.POSITIVE_INFINITY) {
+      return;
+    }
+  }
+
 
   let w1 = parameters[0]*sensorsData[0]*sensorsData[0] + parameters[1]*sensorsData[0] + parameters[2]*sensorsData[1]*sensorsData[1] +
         parameters[3]*sensorsData[1] + parameters[4]*sensorsData[2]*sensorsData[2] + parameters[5]*sensorsData[2];
+
   let w2 = parameters[6]*sensorsData[0]*sensorsData[0] + parameters[7]*sensorsData[0] + parameters[8]*sensorsData[1]*sensorsData[1] +
   parameters[9]*sensorsData[1] + parameters[10]*sensorsData[2]*sensorsData[2] + parameters[11]*sensorsData[2];
 
