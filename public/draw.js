@@ -62,7 +62,7 @@ function draw(ctx) {
         ctx.translate(-tank.position.x - tank.width/2, -tank.position.y - tank.height / 2);
     
         ctx.beginPath();
-        ctx.fillStyle = "green";
+        ctx.fillStyle = tank.color;
 
         if (tank.stopped) {
             ctx.fillStyle = "red";
@@ -73,10 +73,10 @@ function draw(ctx) {
         ctx.restore();
 
         if (!tank.stopped) {
-            // drawSensor(ctx, tank.sensors.frontLeft);
-            // drawSensor(ctx, tank.sensors.frontRight);
-            // drawSensor(ctx, tank.sensors.leftSide);
-            // drawSensor(ctx, tank.sensors.rightSide);
+            drawSensor(ctx, tank.sensors.frontLeft);
+            drawSensor(ctx, tank.sensors.frontRight);
+            drawSensor(ctx, tank.sensors.leftSide);
+            drawSensor(ctx, tank.sensors.rightSide);
         }
     }
 

@@ -206,9 +206,10 @@ function update(ctx) {
 
     draw(ctx);
 
+    let updateSpeed = parseInt(document.getElementById("update-speed").value);
     setTimeout(function() {
         update(ctx);
-    }, 1000/60);
+    }, 1000/updateSpeed);
 }
 
 function tankToPolygonCollision(tank) {

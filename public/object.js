@@ -5,6 +5,12 @@ function Tank(position) {
   this.velocity = new Vector(1, 0);
   this.rotation = degreesToRadians(90);
 
+  let alpha = Math.random() + 0.2;
+  let r = getRandomInt(0, 255);
+  let g = getRandomInt(0, 255);
+  let b = getRandomInt(0, 255);
+
+  this.color = `rgba(${r}, ${g}, ${b}, ${alpha})`;
   this.width = 50;
   this.height = 20;
   this.center = new Vector(this.position.x + this.width/2, this.position.y + this.height/2);

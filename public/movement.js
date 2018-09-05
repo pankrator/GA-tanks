@@ -91,7 +91,11 @@ function checkpointCheck(tank) {
     return;
   }
 
-  if (distanceToCheckpoint - tank.nearestDistToCheckpoint > 100) {
+  if (distanceToCheckpoint < tank.nearestDistToCheckpoint) {
+    tank.nearestDistToCheckpoint = distanceToCheckpoint;
+  }
+
+  if (distanceToCheckpoint - tank.nearestDistToCheckpoint > 70) {
     tank.stopped = true;
     return;
   }
